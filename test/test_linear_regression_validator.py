@@ -4,7 +4,7 @@ import numpy as np
 from TestsTPS.linear_regression_validator import LinearRegressionValidator
 
 
-from  obf.solutions import LinearRegression
+from  obf.linear_regression import LinearRegression
 
 class TestLinearRegressionValidator(unittest.TestCase):
     def test_init_croaks_without_model(self):
