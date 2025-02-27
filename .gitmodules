@@ -1,0 +1,3 @@
+[submodule "TPS-Solutions"]
+	path = solutions
+	url = https://github.com/xvan/TPS-Solutions
