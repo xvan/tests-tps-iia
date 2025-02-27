@@ -9,19 +9,12 @@ class LinearRegressionValidator():
         self._validate_without_noise()
         self._validate_with_noise()
         
-    def _validate_interface(self):
-        if self.modelImpl is None:
-            raise ValueError("model cannot be None")
-        if not hasattr(self.modelImpl, 'fit'):
-            raise ValueError("model must have a fit method")            
-        if not hasattr(self.modelImpl, 'predict'):
-            raise ValueError("model must have a predict method")        
+    def _validate_interface(self):              
         model = self.modelImpl()
         model.fit(np.array([1,2,3]), np.array([1,2,3]))                
-        if not hasattr(model, 'w_'):
-            raise ValueError("model must expose a w_ attribute after fitting")
-        if not hasattr(model, 'b_'):
-            raise ValueError("model must expose a b_ attribute after fitting")
+        model.w_
+        model.b_
+        _ = model.predict(np.array([4,5,6]))
         
     def _validate_without_noise(self):
         A=np.arctan(np.random.uniform(-np.pi/2,np.pi/2,10))
@@ -40,22 +33,20 @@ class LinearRegressionValidator():
     def _validate_with_noise(self):
         w=5
         b=2
+
+        N=5000
+        sigma = 1
         
-        training_x = np.random.uniform(-20,20,5000)
-        training_y = w*training_x + b
+        training_x = np.random.uniform(-20,20,N)
+        training_y = w*training_x + b + np.random.normal(0, sigma, N)
 
-        testing_x = np.random.uniform(-20,20,5000)
-        testing_y = w * testing_x + b
+        model = self.modelImpl()
+        model.fit(training_x,training_y)        
+        assert (w-model.w_)**2 + (b-model.b_)**2 < 1e-2, "Failed Test With Noise w: %f, b: %f" % (model.w_, model.b_)
 
-        np.random.normal()
-
-
-
-
-        raise NotImplementedError()
-        
         
 
+        
         #print(np.arctan(np.pi/4))        
         #test_model.validate()
         

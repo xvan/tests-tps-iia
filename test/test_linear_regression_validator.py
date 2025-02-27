@@ -4,27 +4,27 @@ import numpy as np
 from TestsTPS.linear_regression_validator import LinearRegressionValidator
 
 
-from solutions import LinearRegression
+from  obf.solutions import LinearRegression
 
 class TestLinearRegressionValidator(unittest.TestCase):
     def test_init_croaks_without_model(self):
-        self.assertRaises(TypeError, lambda: LinearRegressionValidator())
+        with self.assertRaises(TypeError):
+            LinearRegressionValidator()
         
-    def test_validation_croaks_on_model_without_fit(self):
-    
+    def test_validation_croaks_on_model_without_fit(self):    
         class __badLinearRegressionModel_NoFit:
             def predict(self):
                 pass        
-
-        with self.assertRaisesRegexp(ValueError, "model must have a fit method"):
-            LinearRegressionValidator(__badLinearRegressionModel_NoFit).validate()                    
+        
+        with self.assertRaises(Exception):
+            LinearRegressionValidator(__badLinearRegressionModel_NoFit).validate()
         
     def test_validation_croaks_on_model_without_predict(self):        
         class __badLinearRegressionModel_NoPredict:
             def fit(self):
                 pass
 
-        with self.assertRaisesRegexp(ValueError, "model must have a predict method"):
+        with self.assertRaises(Exception):
             LinearRegressionValidator(__badLinearRegressionModel_NoPredict).validate()
         
         
@@ -35,7 +35,7 @@ class TestLinearRegressionValidator(unittest.TestCase):
             def predict(self,X):
                 pass
         
-        with self.assertRaisesRegexp(ValueError, "model must expose a w_ attribute after fitting"):
+        with self.assertRaises(Exception):
             LinearRegressionValidator(__badLinearRegressionModel_NoW_AfterFit).validate()
 
     def test_validation_croaks_on_model_without_b_after_fit(self):        
@@ -45,10 +45,10 @@ class TestLinearRegressionValidator(unittest.TestCase):
             def predict(self,X):
                 pass
         
-        with self.assertRaisesRegexp(ValueError, "model must expose a b_ attribute after fitting"):
+        with self.assertRaises(Exception):
             LinearRegressionValidator(__badLinearRegressionModel_NoB_AfterFit).validate()   
 
-    def test_validation_croaks_on_bad_model(self):
+    def test_validation_croaks_on_bad_predicton(self):
         class badLinearRegressionModel_SomePredict:                        
             def fit(self,X,Y):
                 self.w_ = 3
@@ -58,8 +58,23 @@ class TestLinearRegressionValidator(unittest.TestCase):
                 return np.array(X)*self.w_ + self.b_
 
         with self.assertRaisesRegex(AssertionError, "Failed Test Without Noise"):
-            LinearRegressionValidator(badLinearRegressionModel_SomePredict).validate()        
-        
+            LinearRegressionValidator(badLinearRegressionModel_SomePredict).validate()
+
+    def test_validation_croaks_on_bad_fit(self):
+        class badLinearRegressionModel_SomePredict:                        
+            def fit(self,X,Y):
+                self.w_ = 5.1
+                self.b_ = 2
+                
+            def predict(self,X):
+                return np.array(X)*self.w_ + self.b_
+
+        with self.assertRaisesRegex(AssertionError, "Failed Test Without Noise"):
+            LinearRegressionValidator(badLinearRegressionModel_SomePredict).validate()
+
+        with self.assertRaisesRegex(AssertionError, "Failed Test Without Noise"):
+            LinearRegressionValidator(badLinearRegressionModel_SomePredict).validate()
+
     def test_round_validation(self):
         validator = LinearRegressionValidator(LinearRegression)
         validator.validate()
