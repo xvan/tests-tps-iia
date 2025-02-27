@@ -5,6 +5,7 @@ from TestsTPS.linear_regression_validator import LinearRegressionValidator
 
 
 from  obf.linear_regression import LinearRegression
+from  solutions.linear_regression import LinearRegressionGD
 
 class TestLinearRegressionValidator(unittest.TestCase):
     def test_init_croaks_without_model(self):
@@ -77,6 +78,10 @@ class TestLinearRegressionValidator(unittest.TestCase):
 
     def test_round_validation(self):
         validator = LinearRegressionValidator(LinearRegression)
+        validator.validate()
+
+    def test_round_validation_GD(self):
+        validator = LinearRegressionValidator(LinearRegressionGD)
         validator.validate()
         
 if __name__ == '__main__':
